@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile-local
+    container_name: boilerplate-app
+    restart: unless-stopped
+    working_dir: /usr/share/nginx/html
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/usr/share/nginx/html
+    networks:
+      - boilerplate
+
+
+  db:
+    image: mysql:5.7
+    container_name: boilerplate-db
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: boilerplate
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - boilerplate-db-data:/var/lib/mysql:rw
+    networks:
+      - boilerplate
+
+networks:
+  boilerplate:
+    driver: bridge
+
+#Volumes
+volumes:
+  boilerplate-db-data:
+    driver: local
